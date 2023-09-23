@@ -89,7 +89,7 @@ router.get('/ejercicio5/', async (req, res) => {
 
 router.get('/ejercicio6/:id_alquiler', async (req, res) => {
     try {
-        const id_alquiler = Number(req.params);
+        const id_alquiler = Number(req.params.id_alquiler);
         const response = await db.collection('alquiler').aggregate([
             {$match: {$or:[{'id_alquiler':id_alquiler}]}}
         ]).toArray();
@@ -142,7 +142,7 @@ router.get('/ejercicio8/', async (req, res) => {
 
 router.get('/ejercicio9/:id_alquiler', async (req, res) => {
     try {
-        const id_alquiler = Number(req.params);
+        const id_alquiler = Number(req.params.id_alquiler);
         const response = await db.collection('alquiler').aggregate([
             {$match: {$or:[{'id_alquiler':id_alquiler}]}},
             {$project: {
