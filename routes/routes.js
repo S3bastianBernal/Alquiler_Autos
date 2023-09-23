@@ -89,7 +89,7 @@ router.get('/ejercicio5/', async (req, res) => {
 
 router.get('/ejercicio6/:id_alquiler', async (req, res) => {
     try {
-        const id_alquiler = Number(req.params.id_alquiler);
+        const id_alquiler = Number(req.params);
         const response = await db.collection('alquiler').aggregate([
             {$match: {$or:[{'id_alquiler':id_alquiler}]}}
         ]).toArray();
@@ -142,7 +142,7 @@ router.get('/ejercicio8/', async (req, res) => {
 
 router.get('/ejercicio9/:id_alquiler', async (req, res) => {
     try {
-        const id_alquiler = Number(req.params.id_alquiler);
+        const id_alquiler = Number(req.params);
         const response = await db.collection('alquiler').aggregate([
             {$match: {$or:[{'id_alquiler':id_alquiler}]}},
             {$project: {
@@ -426,4 +426,218 @@ router.get('/login', async (req, res = response)=>{
     }
 })
 
+
+//CRUD
+
+//Alquiler
+
+// GET - Obtener todos los Alquileres
+router.get('/GetAlquiler', async (req, res) => {
+    try {
+        const response = await db.collection('alquiler').find().toArray();
+        res.json(response)
+    } catch (error) {
+        res.status(404).json({message: error.message});
+    }
+});
+
+// POST - Crear un nuevo Alquiler
+router.get('/PostAlquiler',  async (req,res)=>{
+    try {
+        const coleccion = db.collection('alquiler');
+        const data = req.body;
+        const response = await coleccion.insertOne(data);
+        res.json({
+            response,
+            data});
+    } catch (error) {
+        console.log(error);
+    }
+});
+
+// DELETE - Eliminar un Alquiler por su ID
+router.get('/DeleteAlquiler/:id', async (req, res) => {
+    try {
+        const id = req.params;
+        const response = await db.collection('alquiler').deleteOne({_id: new ObjectId(id)})
+        res.json(response)
+    } catch (error) {
+        res.status(404).json({message: error.message});
+    }
+});
+
+// PUT - Actualizar un alquiler por su ID
+router.get('/UpdateAlquiler/:id',  async (req,res)=>{
+    try {
+        const coleccion = db.collection('alquiler');
+        const data = req.body;
+        const id = parseInt(req.params.id);
+
+        console.log(id);
+        await coleccion.findOneAndUpdate({ id_alquiler: id }, { $set: data });
+        res.send(data)
+        } catch (error) {
+        console.log(error);
+    }
+});
+
+//Cliente
+// GET - Obtener todos los clientes
+router.get('/GetClientes', async (req, res) => {
+    try {
+        const response = await db.collection('cliente').find().toArray();
+        res.json(response);
+    } catch (error) {
+        res.status(404).json({ message: error.message });
+    }
+});
+
+
+// POST - Crear un nuevo cliente
+router.post('/PostCliente', async (req, res) => {
+    try {
+        const coleccion = db.collection('cliente');
+        const data = req.body;
+        const response = await coleccion.insertOne(data);
+        res.json({
+            response,
+            data
+        });
+    } catch (error) {
+        console.log(error);
+    }
+});
+
+// DELETE - Eliminar un cliente por su ID
+router.delete('/DeleteCliente/:id', async (req, res) => {
+    try {
+        const id = req.params.id;
+        const response = await db.collection('cliente').deleteOne({ _id: new ObjectId(id) });
+        res.json(response);
+    } catch (error) {
+        res.status(404).json({ message: error.message });
+    }
+});
+
+// PUT - Actualizar un cliente por su ID
+router.put('/UpdateCliente/:id', async (req, res) => {
+    try {
+        const coleccion = db.collection('cliente');
+        const data = req.body;
+        const id = req.params.id;
+
+        await coleccion.updateOne({ _id: new ObjectId(id) }, { $set: data });
+        res.json(data);
+    } catch (error) {
+        console.log(error);
+    }
+});
+
+//Reservas
+
+// GET - Obtener todas las reservas
+router.get('/GetReservas', async (req, res) => {
+    try {
+        const response = await db.collection('reserva').find().toArray();
+        res.json(response);
+    } catch (error) {
+        res.status(404).json({ message: error.message });
+    }
+});
+
+// POST - Crear una nueva reserva
+router.post('/PostReserva', async (req, res) => {
+    try {
+        const coleccion = db.collection('reserva');
+        const data = req.body;
+        const response = await coleccion.insertOne(data);
+        res.json({
+            response,
+            data
+        });
+    } catch (error) {
+        console.log(error);
+    }
+});
+
+// DELETE - Eliminar una reserva por su ID
+router.delete('/DeleteReserva/:id', async (req, res) => {
+    try {
+        const id = req.params.id;
+        const response = await db.collection('reserva').deleteOne({ _id: new ObjectId(id) });
+        res.json(response);
+    } catch (error) {
+        res.status(404).json({ message: error.message });
+    }
+});
+
+// PUT - Actualizar una reserva por su ID
+router.put('/UpdateReserva/:id', async (req, res) => {
+    try {
+        const coleccion = db.collection('reserva');
+        const data = req.body;
+        const id = req.params.id;
+
+        await coleccion.updateOne({ _id: new ObjectId(id) }, { $set: data });
+        res.json(data);
+    } catch (error) {
+        console.log(error);
+    }
+});
+
+//SucursalAutomovil
+
+
+// GET - Obtener todos los automóviles en una sucursal
+router.get('/GetSucursalAutomoviles', async (req, res) => {
+    try {
+        const response = await db.collection('sucursalAutomovil').find().toArray();
+        res.json(response);
+    } catch (error) {
+        res.status(404).json({ message: error.message });
+    }
+});
+
+// POST - Agregar un automóvil a una sucursal
+router.post('/PostSucursalAutomovil', async (req, res) => {
+    try {
+        const coleccion = db.collection('sucursalAutomovil');
+        const data = req.body;
+        const response = await coleccion.insertOne(data);
+        res.json({
+            response,
+            data
+        });
+    } catch (error) {
+        console.log(error);
+    }
+});
+
+// DELETE - Eliminar un automóvil de una sucursal por su ID
+router.delete('/DeleteSucursalAutomovil/:id', async (req, res) => {
+    try {
+        const id = req.params.id;
+        const response = await db.collection('sucursalAutomovil').deleteOne({ _id: new ObjectId(id) });
+        res.json(response);
+    } catch (error) {
+        res.status(404).json({ message: error.message });
+    }
+});
+
+// PUT - Actualizar información de un automóvil en una sucursal por su ID
+router.put('/UpdateSucursalAutomovil/:id', async (req, res) => {
+    try {
+        const coleccion = db.collection('sucursalAutomovil');
+        const data = req.body;
+        const id = req.params.id;
+
+        await coleccion.updateOne({ _id: new ObjectId(id) }, { $set: data });
+        res.json(data);
+    } catch (error) {
+        console.log(error);
+    }
+});
+
 module.exports = router
+
+
